@@ -24,3 +24,12 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+ext {
+    navigationVersion = "2.3.2"
+    retrofitVersion = '2.9.0'
+    retrofitLoggingInterceptorVersion = "3.8.0"
+    retrofitConverterGsonVersion = "2.6.2"
+    retrofitCoroutinesVersion= "0.9.2"
+    fragmentKtxVersion = "1.2.5"
+    timberVersion = "4.7.1"
+}
