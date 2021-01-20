@@ -1,7 +1,11 @@
 package com.example.android.catfacts.di
 
+import com.example.android.catfacts.app.adapter.CatFactsAdapter
 import com.example.android.catfacts.app.api.CAT_FACTS_BASE_URL
+import com.example.android.catfacts.app.api.CAT_IMG_URL
 import com.example.android.catfacts.app.api.ICatFactsApi
+import com.example.android.catfacts.app.api.ICatImgApi
+import com.example.android.catfacts.app.fragment.catFacts.CatFactsViewModel
 import com.example.android.catfacts.app.fragment.main.MainViewModel
 import com.example.android.catfacts.app.repository.RepositoryImpl
 import com.itkacher.okhttpprofiler.OkHttpProfilerInterceptor
@@ -21,23 +25,36 @@ val appMode = module {
             .addInterceptor(OkHttpProfilerInterceptor())
             .build()
     }
-    single {
+
+    single<ICatFactsApi> {
         Retrofit.Builder()
             .client(get())
             .baseUrl(CAT_FACTS_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
+            .create(ICatFactsApi::class.java)
     }
-    single {
-        get<Retrofit>().create(ICatFactsApi::class.java)
+    single<ICatImgApi> {
+        Retrofit.Builder()
+            .client(get())
+            .baseUrl(CAT_IMG_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .build()
+            .create(ICatImgApi::class.java)
+    }
+
+    factory {
+        CatFactsAdapter(get<RepositoryImpl>())
     }
 }
 
 val repositoryModule = module {
-    single { RepositoryImpl(get()) }
+    single { RepositoryImpl(get(), get()) }
 }
 
 val viewModelModule = module {
     viewModel { MainViewModel(get<RepositoryImpl>()) }
+    viewModel { CatFactsViewModel(get<RepositoryImpl>()) }
 }
