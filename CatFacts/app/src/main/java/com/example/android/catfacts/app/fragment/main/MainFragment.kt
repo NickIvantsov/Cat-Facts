@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.android.catfacts.R
-import com.example.android.catfacts.app.model.CatFacts
 import com.example.android.catfacts.databinding.MainFragmentBinding
 import com.example.android.catfacts.util.navigateTo
 import kotlinx.coroutines.GlobalScope
@@ -17,7 +16,6 @@ class MainFragment : Fragment() {
 
     companion object {
         fun newInstance() = MainFragment()
-        var data: CatFacts? = null
     }
 
     private val viewModel by inject<MainViewModel>()
