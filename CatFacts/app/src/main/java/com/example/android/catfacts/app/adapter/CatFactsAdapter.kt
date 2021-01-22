@@ -1,5 +1,6 @@
 package com.example.android.catfacts.app.adapter
 
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,8 +31,15 @@ class CatFactsAdapter(private val repository: IRepository) :
             item.apply {
                 tvFact.text = item.text
                 GlobalScope.launch {
+                    val bitmap:Bitmap = MainViewModel.bitmapList[position]!!
+                    val width = bitmap.width
+                    val height = bitmap.height
+                    //половиним
+                    val halfWidth = width/2
+                    val halfHeight = height/2
+                    val bmHalf = Bitmap.createScaledBitmap(bitmap,halfWidth,halfHeight,false)
                     withContext(Dispatchers.Main) {
-                            ivCatImg.setImageBitmap(MainViewModel.bitmapList[position])
+                            ivCatImg.setImageBitmap(bmHalf)
                     }
                 }
                 cardViewMainInfo.setOnClickListener {
