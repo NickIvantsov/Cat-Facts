@@ -9,6 +9,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.android.catfacts.app.db.CatEntity
 import com.example.android.catfacts.app.repository.IRepository
+import com.example.android.catfacts.util.convert
 import com.example.android.catfacts.util.errorTimber
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
@@ -31,8 +32,7 @@ class MainViewModel(private val repository: IRepository) : ViewModel() {
                 val `in`: InputStream = URL(catUrl!!.file).openStream()
                 val icon: Bitmap = BitmapFactory.decodeStream(`in`)
                 bitmapList.add(icon)
-                val array = getByteArrayfromBitmap(icon)
-                val catEntity = CatEntity(catFact.text, array!!)
+                val catEntity = CatEntity(catFact.text, convert(icon)!!)
                 insert(catEntity)
             } catch (e: Exception) {
                 errorTimber(e)

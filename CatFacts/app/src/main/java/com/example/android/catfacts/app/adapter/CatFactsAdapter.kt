@@ -34,12 +34,12 @@ class CatFactsAdapter(private val repository: IRepository) :
                     val bitmap:Bitmap = MainViewModel.bitmapList[position]!!
                     val width = bitmap.width
                     val height = bitmap.height
-                    //половиним
-                    val halfWidth = width/2
-                    val halfHeight = height/2
-                    val bmHalf = Bitmap.createScaledBitmap(bitmap,halfWidth,halfHeight,false)
+//                    //половиним
+//                    val halfWidth = width/2
+//                    val halfHeight = height/2
+//                    val bmHalf = Bitmap.createScaledBitmap(bitmap,halfWidth,halfHeight,false)
                     withContext(Dispatchers.Main) {
-                            ivCatImg.setImageBitmap(bmHalf)
+                            ivCatImg.setImageBitmap(bitmap)
                     }
                 }
                 cardViewMainInfo.setOnClickListener {
