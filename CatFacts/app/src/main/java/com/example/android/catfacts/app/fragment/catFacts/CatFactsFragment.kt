@@ -51,7 +51,7 @@ class CatFactsFragment : Fragment() {
         catFactsAdapter.getCatFactsDataLiveData().observe(viewLifecycleOwner) {
             try {
                 val imgBitmap = MainViewModel.bitmapList[it]
-                val text = repos.getCatFactsData()!![it].text
+                val text = repos.getCatFactsDataFromCash()!![it].text
                 showDialog(imgBitmap, text)
             } catch (ex: Exception) {
                 errorTimber(ex)
