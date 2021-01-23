@@ -1,4 +1,4 @@
-package com.example.android.catfacts.app
+package com.example.android.catfacts.core
 
 import android.app.Application
 import com.example.android.catfacts.BuildConfig

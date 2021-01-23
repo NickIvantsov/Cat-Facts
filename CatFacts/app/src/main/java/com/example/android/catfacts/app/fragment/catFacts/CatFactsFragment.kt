@@ -7,12 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.android.catfacts.app.adapter.CatFactsAdapter
 import com.example.android.catfacts.app.dialogs.CatFactItemDialogFragment
-import com.example.android.catfacts.app.fragment.main.MainViewModel
-import com.example.android.catfacts.app.repository.RepositoryImpl
 import com.example.android.catfacts.databinding.CatFactsFragmentBinding
 import com.example.android.catfacts.util.errorTimber
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
 class CatFactsFragment : Fragment() {
@@ -24,7 +27,6 @@ class CatFactsFragment : Fragment() {
 
     private val viewModel by inject<CatFactsViewModel>()
     private val catFactsAdapter by inject<CatFactsAdapter>()
-    private val repos by inject<RepositoryImpl>()
     private var bindingImpl: CatFactsFragmentBinding? = null
     private val binding get() = bindingImpl!!
 
@@ -48,22 +50,34 @@ class CatFactsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        catFactsAdapter.getCatFactsDataLiveData().observe(viewLifecycleOwner) {
+        catFactsAdapter.getCatFactsDataLiveData().observe(viewLifecycleOwner) {position->
             try {
-                val imgBitmap = MainViewModel.bitmapList[it]
-                val text = repos.getCatFactsDataFromCash()!![it].text
-                showDialog(imgBitmap, text)
+                val imgBitmap = viewModel.getImgBitmapList()[position]
+                GlobalScope.launch {
+
+                    val text = viewModel.getCatFactsList()!![position].text
+                    showDialog(imgBitmap, text)
+
+                }
             } catch (ex: Exception) {
                 errorTimber(ex)
             }
-
         }
-        viewModel.fillAdapter(catFactsAdapter)
+
+        fillAdapter()
     }
 
-    private fun showDialog(imgBitmap: Bitmap?, text: String) {
-        CatFactItemDialogFragment.newInstance(imgBitmap, text)
-            .show(parentFragmentManager, DIALOG_TAG)
+    private fun fillAdapter() {
+        GlobalScope.launch {
+            viewModel.fillAdapter(catFactsAdapter)
+        }
+    }
+
+    private suspend fun showDialog(imgBitmap: Bitmap?, text: String) {
+        withContext(Dispatchers.Main) {
+            CatFactItemDialogFragment.newInstance(imgBitmap, text)
+                .show(parentFragmentManager, DIALOG_TAG)
+        }
     }
 
 }

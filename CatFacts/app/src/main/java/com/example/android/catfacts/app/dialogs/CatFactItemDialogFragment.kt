@@ -41,10 +41,10 @@ class CatFactItemDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupView(view)
+        setupView()
     }
 
-    private fun setupView(view: View) {
+    private fun setupView() {
         binding.tvFact.text = arguments?.getString(KEY_TEXT)
         val bitmap = arguments?.getParcelable<Bitmap>(KEY_BITMAP)
         binding.ivCatImgCatItemDialog.setImageBitmap(bitmap)

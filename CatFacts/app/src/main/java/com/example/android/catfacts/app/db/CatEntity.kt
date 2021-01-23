@@ -7,6 +7,5 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "cat_facts_table")
 data class CatEntity(
     @PrimaryKey @ColumnInfo(name = "cat_facts")
-    val catFacts: String,
-    val photo: String
+    val catFacts: String
 )

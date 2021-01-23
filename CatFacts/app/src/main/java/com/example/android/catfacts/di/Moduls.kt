@@ -17,6 +17,7 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidApplication
+import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
 import retrofit2.Retrofit
@@ -51,7 +52,7 @@ val appMode = module {
     }
 
     factory {
-        CatFactsAdapter(get<RepositoryImpl>())
+        CatFactsAdapter(get<RepositoryImpl>(),androidContext())
     }
 }
 
@@ -72,10 +73,10 @@ val databaseModule = module {
 }
 
 val repositoryModule = module {
-    single { RepositoryImpl(get(), get(),get()) }
+    single { RepositoryImpl(get(), get(),get(),androidContext()) }
 }
 
 val viewModelModule = module {
-    viewModel { MainViewModel(get<RepositoryImpl>()) }
+    viewModel { MainViewModel(get<RepositoryImpl>(),androidContext()) }
     viewModel { CatFactsViewModel(get<RepositoryImpl>()) }
 }

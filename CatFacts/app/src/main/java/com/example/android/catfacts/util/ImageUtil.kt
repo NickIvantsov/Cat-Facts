@@ -19,13 +19,3 @@ fun convert(bitmap: Bitmap): String? {
     bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
     return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
 }
-
-fun getByteArrayFromBitmap(bitmap: Bitmap): ByteArray? {
-    val bos = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos)
-    return bos.toByteArray()
-}
-
-fun getBitmapFromByteArray(bitmap: ByteArray): Bitmap? {
-    return BitmapFactory.decodeByteArray(bitmap, 0, bitmap.size)
-}
