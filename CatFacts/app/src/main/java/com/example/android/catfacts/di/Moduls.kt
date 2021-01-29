@@ -2,6 +2,7 @@ package com.example.android.catfacts.di
 
 import android.app.Application
 import androidx.room.Room
+import com.example.android.catfacts.app.activity.SplashViewModel
 import com.example.android.catfacts.app.adapter.CatFactsAdapter
 import com.example.android.catfacts.app.api.CAT_FACTS_BASE_URL
 import com.example.android.catfacts.app.api.CAT_IMG_URL
@@ -52,7 +53,7 @@ val appMode = module {
     }
 
     factory {
-        CatFactsAdapter(get<RepositoryImpl>(),androidContext())
+        CatFactsAdapter(get<RepositoryImpl>(), androidContext())
     }
 }
 
@@ -73,10 +74,11 @@ val databaseModule = module {
 }
 
 val repositoryModule = module {
-    single { RepositoryImpl(get(), get(),get(),androidContext()) }
+    single { RepositoryImpl(get(), get(), get(), androidContext()) }
 }
 
 val viewModelModule = module {
-    viewModel { MainViewModel(get<RepositoryImpl>(),androidContext()) }
+    viewModel { MainViewModel(get<RepositoryImpl>(), androidContext()) }
     viewModel { CatFactsViewModel(get<RepositoryImpl>()) }
+    viewModel { SplashViewModel(androidApplication()) }
 }
