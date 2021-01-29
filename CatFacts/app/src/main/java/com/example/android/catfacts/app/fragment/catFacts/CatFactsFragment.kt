@@ -54,10 +54,8 @@ class CatFactsFragment : Fragment() {
             try {
                 val imgBitmap = viewModel.getImgBitmapList()[position]
                 GlobalScope.launch {
-
                     val text = viewModel.getCatFactsList()!![position].text
                     showDialog(imgBitmap, text)
-
                 }
             } catch (ex: Exception) {
                 errorTimber(ex)

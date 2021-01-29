@@ -50,7 +50,6 @@ class CatFactsAdapter(private val repository: IRepository,private val context:Co
                 .with(context)
                 .load(bitmap)
                 .into(ivCatImg)
-//            ivCatImg.setImageBitmap(bitmap)
         }
     }
 

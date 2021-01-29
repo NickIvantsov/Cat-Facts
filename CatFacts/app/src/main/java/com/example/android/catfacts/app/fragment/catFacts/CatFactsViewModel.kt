@@ -16,7 +16,7 @@ class CatFactsViewModel(private val repository: IRepository) : ViewModel() {
     fun getImgBitmapList():ArrayList<Bitmap?>{
        return repository.getImgBitmapList()
     }
-    suspend fun getCatFactsList():CatFacts?{
+    fun getCatFactsList():CatFacts?{
        return repository.getCatFactsDataFromCash()
     }
 }

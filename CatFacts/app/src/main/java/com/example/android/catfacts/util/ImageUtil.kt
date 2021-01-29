@@ -19,3 +19,7 @@ fun convert(bitmap: Bitmap): String? {
     bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
     return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
 }
+
+fun showImg(){
+
+}

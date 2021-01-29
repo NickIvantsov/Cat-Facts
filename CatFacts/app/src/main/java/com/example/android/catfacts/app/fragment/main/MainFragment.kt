@@ -98,7 +98,6 @@ class MainFragment : Fragment() {
         withContext(Dispatchers.Main) {
             navigateTo(requireView(), viewId)
         }
-
     }
 
     private suspend fun loadCatFacts(): Boolean {

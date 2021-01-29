@@ -11,6 +11,8 @@ import com.example.android.catfacts.app.model.CatFactItem
 import com.example.android.catfacts.app.model.CatFacts
 import com.example.android.catfacts.util.debugTimber
 import com.example.android.catfacts.util.net.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class RepositoryImpl(
@@ -33,7 +35,7 @@ class RepositoryImpl(
             return try {
                 val response = catFactsApi.getCatFacts()
                 response.body()?.forEach {
-                    data.add(CatFactItem(text = it.text))
+                    withContext(Dispatchers.IO) { data.add(CatFactItem(text = it.text))}
                 }
                 if (response.isSuccessful) {
                     handleSuccess(response)
@@ -59,7 +61,7 @@ class RepositoryImpl(
 
     override suspend fun getCatImgUrl() = catImgApi.getCatImg()
 
-    override suspend fun getCatFactsDataFromCash(): CatFacts {
+    override  fun getCatFactsDataFromCash(): CatFacts {
         return data
     }
 

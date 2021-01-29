@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface IRepository {
     suspend fun getCatFacts(): AppResult<CatFacts>
     suspend fun getCatImgUrl(): CatImg?
-    suspend fun getCatFactsDataFromCash(): CatFacts?
+    fun getCatFactsDataFromCash(): CatFacts?
     fun getImgBitmapList():ArrayList<Bitmap?>
 
     @WorkerThread
