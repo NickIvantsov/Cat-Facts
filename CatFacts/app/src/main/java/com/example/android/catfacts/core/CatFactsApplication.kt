@@ -2,20 +2,25 @@ package com.example.android.catfacts.core
 
 import android.app.Application
 import com.example.android.catfacts.BuildConfig
-import com.example.android.catfacts.di.appMode
-import com.example.android.catfacts.di.databaseModule
-import com.example.android.catfacts.di.repositoryModule
-import com.example.android.catfacts.di.viewModelModule
+import com.example.android.catfacts.di.*
 import com.example.android.catfacts.util.ReleaseThree
 import com.facebook.stetho.Stetho
 import org.koin.android.ext.android.startKoin
 import timber.log.Timber
 
-class MyApplication : Application() {
+class CatFactsApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        // Start Koin
-        startKoin(androidContext = this, listOf(appMode, viewModelModule, repositoryModule,databaseModule))
+        startKoin(
+            androidContext = this, listOf(
+                adapterModule,
+                viewModelModule,
+                repositoryModule,
+                databaseModule,
+                networkModule,
+                apiModule
+            )
+        )
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         } else {
