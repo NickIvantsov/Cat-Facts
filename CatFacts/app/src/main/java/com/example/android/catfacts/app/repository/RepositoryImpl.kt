@@ -29,13 +29,17 @@ class RepositoryImpl(
         return bitmapList
     }
 
-    override suspend fun getCatFacts(): AppResult<CatFacts> {
+    override suspend fun makeCatFactsRequest(): AppResult<CatFacts> {
         data.clear()
         if (isOnline(context)) {
             return try {
                 val response = catFactsApi.getCatFacts()
-                response.body()?.forEach {
-                    withContext(Dispatchers.IO) { data.add(CatFactItem(text = it.text))}
+                response.body()?.forEach {catFact->
+                    withContext(Dispatchers.IO) {
+                        data.add(CatFactItem(text = catFact.text))
+                        val catEntity = CatEntity(catFact.text)
+                        insert(catEntity)
+                    }
                 }
                 if (response.isSuccessful) {
                     handleSuccess(response)
@@ -59,14 +63,13 @@ class RepositoryImpl(
         }
     }
 
-    override suspend fun getCatImgUrl() = catImgApi.getCatImg()
+    override suspend fun makeCatImgUrlRequest() = catImgApi.getCatImg()
 
     override  fun getCatFactsDataFromCash(): CatFacts {
         return data
     }
 
-    @WorkerThread
-    override suspend fun insert(catEntity: CatEntity) {
+    override suspend  fun insert(catEntity: CatEntity) {
         catDao.insert(catEntity)
     }
 }

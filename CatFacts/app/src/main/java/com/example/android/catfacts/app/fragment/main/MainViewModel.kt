@@ -3,11 +3,7 @@ package com.example.android.catfacts.app.fragment.main
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.android.catfacts.app.db.CatEntity
 import com.example.android.catfacts.app.model.CatFacts
 import com.example.android.catfacts.app.model.CatImg
 import com.example.android.catfacts.app.repository.IRepository
@@ -15,8 +11,8 @@ import com.example.android.catfacts.util.convert
 import com.example.android.catfacts.util.errorTimber
 import com.example.android.catfacts.util.net.AppResult
 import com.example.android.catfacts.util.net.isOnline
-import kotlinx.coroutines.launch
-import timber.log.Timber
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.InputStream
 import java.net.URL
@@ -25,35 +21,51 @@ import java.net.URL
 class MainViewModel(private val repository: IRepository, private val context: Context) :
     ViewModel() {
     var alpha = 1F
+        private set
     var isClickable = true
+        private set
 
-    suspend fun loadCatFacts():Boolean {
+    fun enableBtn() {
+        alpha = 1F
+        isClickable = true
+    }
+
+    fun disableBtn() {
+        alpha = 0.3F
+        isClickable = false
+    }
+
+    suspend fun loadCatFacts(): Boolean {
         clearImageList()
-        when (val result = repository.getCatFacts()) {
-            is AppResult.Success -> {
-                var count = 0
-                val catFactsList: CatFacts = result.successData
-                catFactsList.forEach { catFact ->
-                    try {
-                        if (isOnline(context)) {
-                            val catUrl = repository.getCatImgUrl()
-                            saveImg(catUrl, count)
-                            val catEntity = CatEntity(catFact.text)
-                            insert(catEntity)
-                        } else {
-                            takePhotoFromCash(count)
-                        }
-
-                    } catch (e: Exception) {
-                        errorTimber(e)
-                    }
-                    ++count
+        return withContext(Dispatchers.IO) {
+            when (val result = repository.makeCatFactsRequest()) {
+                is AppResult.Success -> {
+                    loadPhoto(result)
+                    true
                 }
-                return true
+                is AppResult.Error -> {
+                    errorTimber(result.exception)
+                    false
+                }
             }
-            is AppResult.Error -> {
-                return false
+        }
+    }
+
+    private suspend fun loadPhoto(result: AppResult.Success<CatFacts>) {
+        var count = 0
+        val catFactsList: CatFacts = result.successData
+        catFactsList.forEach { _ ->
+            try {
+                if (isOnline(context)) {
+                    val catUrl = repository.makeCatImgUrlRequest()
+                    saveImg(catUrl, count)
+                } else {
+                    takePhotoFromCash(count)
+                }
+            } catch (e: Exception) {
+                errorTimber(e)
             }
+            ++count
         }
     }
 
@@ -77,9 +89,5 @@ class MainViewModel(private val repository: IRepository, private val context: Co
 
     private fun clearImageList() {
         repository.getImgBitmapList().clear()
-    }
-
-    private fun insert(catEntity: CatEntity) = viewModelScope.launch {
-        repository.insert(catEntity)
     }
 }

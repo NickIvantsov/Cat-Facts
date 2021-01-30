@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.android.catfacts.R
 import com.example.android.catfacts.databinding.MainFragmentBinding
-import com.example.android.catfacts.util.errorTimber
 import com.example.android.catfacts.util.navigateTo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -20,6 +19,8 @@ class MainFragment : Fragment() {
 
     companion object {
         fun newInstance() = MainFragment()
+        private const val ENABLE = "ENABLE"
+        private const val DISABLE = "DISABLE"
     }
 
     private val viewModel by inject<MainViewModel>()
@@ -42,31 +43,25 @@ class MainFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setOnClickCatFacts()
-        saveActiveCatFactsBtn()
+        setActiveCatFactsBtn()
     }
 
     private fun setOnClickCatFacts() {
         binding.catFactsButton
-            .setOnClickListener { _ ->
+            .setOnClickListener {
                 catFactsButtonOnClickImpl()
             }
     }
 
     private fun catFactsButtonOnClickImpl() {
-        deactivateCatFactsBtn()
-        GlobalScope.launch {
+        setActiveBtn(DISABLE)
+        GlobalScope.launch((Dispatchers.IO)) {
             if (loadCatFacts()) {
-                activateCatFactsBtn()
-                try {
-                    navigateToImpl(R.id.catFactsFragment)
-                } catch (ex: Exception) {
-                    errorTimber(ex)
-                }
+                navigateToImpl(R.id.catFactsFragment)
             } else {
-                activateCatFactsBtn()
-                saveActiveCatFactsBtn()
                 showInternetError()
             }
+            setActiveBtn(ENABLE)
         }
     }
 
@@ -76,20 +71,20 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun activateCatFactsBtn() {
-        viewModel.alpha = 1F
-        viewModel.isClickable = true
-        saveActiveCatFactsBtn()
+    private fun setActiveBtn(status: String) {
+        when (status) {
+            ENABLE -> {
+                viewModel.enableBtn()
+            }
+            DISABLE -> {
+                viewModel.disableBtn()
+            }
+        }
+        setActiveCatFactsBtn()
     }
 
-    private fun deactivateCatFactsBtn() {
-        viewModel.alpha = 0.3F
-        viewModel.isClickable = false
-        saveActiveCatFactsBtn()
-    }
 
-
-    private fun saveActiveCatFactsBtn() {
+    private fun setActiveCatFactsBtn() {
         binding.catFactsButton.alpha = viewModel.alpha
         binding.catFactsButton.isClickable = viewModel.isClickable
     }

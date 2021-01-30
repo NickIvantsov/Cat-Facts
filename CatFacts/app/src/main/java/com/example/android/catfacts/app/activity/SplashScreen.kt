@@ -27,8 +27,8 @@ class SplashScreen : AppCompatActivity() {
             )
         }
         viewModel.goToMainScreen()
-        viewModel.getMainLiveData().observe(this){
-            val intent = Intent(getApplication(), MainActivity::class.java)
+        viewModel.getMainLiveData().observe(this) {
+            val intent = Intent(application, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
